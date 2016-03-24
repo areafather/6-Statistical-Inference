@@ -1,0 +1,90 @@
+---
+title: "Summary Statistical Inference Course"
+author: "Desiré De Waele"
+date: "24 maart 2016"
+output:
+  html_document:
+    fig_height: 4
+    fig_width: 5
+    highlight: tango
+    theme: united
+    toc: yes
+    toc_depth: 2
+---
+
+#Conditional probability
+##Definition
+$$ P(A ~|~ B) = \frac{P(A \cap B)}{P(B)} $$
+
+##Bayes' rule
+
+$$ P(B ~|~ A) = \frac{P(A ~|~ B) P(B)}{P(A ~|~ B) P(B) + P(A ~|~ B^c)P(B^c)}. $$
+
+##Diagnostic tests
+
+* Sensitivity - probability that the test is positive given that the subject actually has the disease, $P(+ ~|~ D)$
+* Specificity - probability that the test is negative given that the subject does not have the disease, $P(- ~|~ D^c)$
+* Positive predicted value - probability that the subject has the disease given that the test is positive, $P(D ~|~ +)$
+* Negative predicted value - probability that the subject does not have the disease given that the test is negative, $P(D^c ~|~ -)$
+* Prevalence - marginal probability of disease, $P(D)$
+
+#Expected values
+##Population Mean
+$$ E[X] = \sum_x xp(x)$$
+
+##Sample Mean
+$$ \bar X = \sum_{i=1}^n x_i p(x_i)$$
+
+```{r, warning=FALSE, message=FALSE, fig.width=10}
+library(UsingR); data(galton); library(ggplot2); library(reshape2)
+longGalton <- melt(galton, measure.vars = c("child", "parent"))
+g <- ggplot(longGalton, aes(x = value))
+g <- g + geom_histogram(aes(y = ..density.., fill = variable), binwidth=1, color = "black")
+g <- g + geom_density(size = 1)
+g <- g + facet_grid(. ~ variable)
+g
+```
+
+#Variance
+
+## Population Variance
+$$ \sigma^2 = Var(X) = E[(X - \mu)^2] = E[X^2] - E[X]^2 $$
+
+## Sample Variance
+$$ S^2 = \frac{\sum_{i=1} (X_i - \bar X)^2}{n-1} $$
+
+## Standard Error of the Mean
+$$ S / \sqrt{n} $$
+
+#Common distributions
+##Bernoulli distribution
+$$ P(X = x) = \left( \begin{array}{c} n \ x \end{array} \right) p^x(1 - p)^{n-x} $$
+Suppose a friend has 8 children, 7 of which are girls and none are twins. If each gender has an independent 50% probability for each birth, what's the probability of getting 7 or more girls out of 8 births? 
+$$\left( \begin{array}{c} 8 \ 7 \end{array} \right) .5^{7}(1-.5)^{1} + \left( \begin{array}{c} 8 \ 8 \end{array} \right) .5^{8}(1-.5)^{0} \approx 0.04 $$
+
+##Normal distribution
+
+* Approximately 68\%, 95\% and 99\% of the normal density lies within 1, 2 and 3 standard
+deviations from the mean, respectively.
+* 1.28, 1.645, 1.96 and 2.33 are the 90th, 95th, 97:5th and 99th percentiles of the
+standard normal distribution, respectively.
+
+##Poisson distribution
+
+#Central Limit Theorem
+The sample means of any distribution approximate a normal distribution. The mean is the population mean $\mu$, the variance is the standard error, the population variance $\sigma$ divided by $\sqrt{n}$.
+$$\frac{\bar X_n - \mu}{\sigma / \sqrt{n}}= \frac{\sqrt n (\bar X_n - \mu)}{\sigma} = \frac{\mbox{Estimate} - \mbox{Mean of estimate}}{\mbox{Std. Err. of estimate}}$$
+```{r, fig.width=10}
+nosim <- 1000
+cfunc <- function(x, n) sqrt(n) * (mean(x) - 3.5) / 1.71
+dat <- data.frame(x = c(apply(matrix(sample(1 : 6, nosim * 10, replace = TRUE), nosim), 1, cfunc, 10),
+                        apply(matrix(sample(1 : 6, nosim * 20, replace = TRUE), nosim), 1, cfunc, 20),
+                        apply(matrix(sample(1 : 6, nosim * 30, replace = TRUE), nosim), 1, cfunc, 30)),
+                  size = factor(rep(c(10, 20, 30), rep(nosim, 3))))
+
+g <- ggplot(dat, aes(x = x, fill = size))
+g <- g + geom_histogram(alpha = .50, binwidth=.3, colour = "black", aes(y = ..density..)) 
+g <- g + stat_function(fun = dnorm, size = 1)
+g <- g + facet_grid(. ~ size); g
+```
+

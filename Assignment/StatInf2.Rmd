@@ -8,14 +8,10 @@ output:
     theme: united
     toc: yes
     toc_depth: 2
-  pdf_document:
-    highlight: tango
-    toc: yes
-    toc_depth: 2
 ---
     
 ##Synopsis
-This assignment explores whether the **delivery methods of Vitamin C and/or the dose has an influence on the tooth lengths of guinea pigs**. The dataset is part of R Base, a documentation of can be found on https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/ToothGrowth.html. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, (orange juice or ascorbic acid (a form of vitamin C and coded as VC).
+This assignment explores whether the **delivery methods of Vitamin C and/or the dose has an influence on the tooth lengths of guinea pigs**. The dataset is part of R Base, a documentation of can be found on https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/ToothGrowth.html. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC).
 
 This report consists of **three parts**:
 
@@ -44,16 +40,20 @@ summary(ToothGrowth)
 
 The summary tells us something about the overall data, and how many values there are per factor supplement or dose. We'll now plot the data. First, we group the data per supplement type, i.e. the delivery method.
 ```{r}
-ggplot(ToothGrowth, aes(supp, len)) + geom_boxplot(aes(fill=supp)) +
-        labs(title = "Boxplot of tooth lengths per delivery method of Vitamin C",
-                x = "Delivery Method", y = "Tooth length in mm")
+g = ggplot(ToothGrowth, aes(supp, len))
+g = g + geom_boxplot(aes(fill=supp))
+g = g + labs(title = "Boxplot of tooth lengths per delivery method of Vitamin C",
+             x = "Delivery Method", y = "Tooth length in mm")
+g
 ```
 
 We immediately notice *a* difference in the median and range of the tooth lengths for both delivery methods. Because of this, it might be worth it to do a hypothesis test for these. Let us check if the same can be said about a possible doses.
 ```{r}
-ggplot(ToothGrowth, aes(dose, len)) + geom_boxplot(aes(fill=dose)) +
-        labs(title = "Boxplot of tooth lengths per dose",
-                x = "Dose in mg per day", y = "Tooth length in mm")
+g = ggplot(ToothGrowth, aes(dose, len))
+g = g + geom_boxplot(aes(fill=dose))
+g = g + labs(title = "Boxplot of tooth lengths per dose",
+             x = "Dose in mg per day", y = "Tooth length in mm")
+g
 ```
 
 Again, there seems to be a clear correlation, based on the boxplots. This motivates us to do a hypothesis test for the different doses as well. We will do this for the most extreme doses, i.e. a dose of 0.5 mg per day and 2 mg per day.
